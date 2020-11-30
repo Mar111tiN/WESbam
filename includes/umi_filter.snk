@@ -1,15 +1,14 @@
 
 rule umi_group:
-    input:
-        "finalbamsplit/{sample}_{tumor}.{chrom}.bam"
+    input: get_umi_filter_input
     output:
-        "umi/{sample}_{type}.{chrom}.UG.bam"  # UG --> Umi-grouped
+        "umi/{sample}.UG.{chrom}.bam"  # UG --> Umi-grouped
     threads:
         config['UMI_filter']['group']['threads']
     conda:
         "../env/ubam-env.yml"
     log:
-        "logs/umi/{sample}_{type}.{chrom}.UG.log"
+        "logs/umi/{sample}.{chrom}.UG.log"
     params:
         mem = f"-Xmx{config['UMI_filter']['group']['mem']}",
         strategy = config['UMI_filter']['group']['group_strategy'],
@@ -25,9 +24,9 @@ rule umi_group:
 
 rule call_consensus:
     input:
-        "umi/{sample}_{type}.{chrom}.UG.bam"
+        "umi/{sample}.UG.{chrom}.bam"
     output:
-        "umi/{sample}_{type}.{chrom}.CR.bam"
+        "umi/{sample}.CR.{chrom}.bam"
     threads:
         config['UMI_filter']['call']['threads']
     conda:
@@ -52,10 +51,10 @@ rule call_consensus:
 
 rule mark_CR:
     input:
-        "umi/{sample}_{type}.{chrom}.CR.bam"
+        "umi/{sample}.CR..{chrom}bam"
     output:
-        bam = "umi/{sample}_{type}.{chrom}.CR_XT.bam",
-        metrix = "umi/{sample}_{type}.{chrom}.CR_XT.metrix"
+        bam = "umi/{sample}.CR_XT.{chrom}.bam",
+        metrix = "umi/{sample}.CR_XT.{chrom}.metrix"
     threads:
         config['alignment']['threads']
     conda:
@@ -68,12 +67,12 @@ rule mark_CR:
 
 rule remap_CR:
     input:
-        bam = "umi/{sample}_{type}.{chrom}.CR_XT.bam",
+        bam = "umi/{sample}.CR_XT.{chrom}.bam",
         genome = os.path.join(full_path('genome_path'), 'gen_ref.done')
     output:
-        bam = "umi/{sample}_{type}.{chrom}.CRmapped.bam"
+        bam = "umi/{sample}.CRmapped.{chrom}.bam"
     log:
-        "logs/Umapped/{sample}_{type}.{chrom}.log"
+        "logs/Umapped/{sample}.{chrom}.log"
     threads:
         config['UMI_filter']['remap']['threads']
     conda:
@@ -123,9 +122,9 @@ rule remap_CR:
 
 rule filter_consensus:
     input:
-        "umi/{sample}_{type}.{chrom}.CRmapped.bam"
+        "umi/{sample}.CRmapped.{chrom}.bam"
     output:
-        "umi/{sample}_{type}.{chrom}.UF.bam"
+        "umi/{sample}.UF.{chrom}.bam"
     threads:
         config['UMI_filter']['filter']['threads']
     conda:

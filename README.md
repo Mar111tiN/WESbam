@@ -1,6 +1,8 @@
-# GATK Best Practices - Somatic Variant Calling for human Whole Exom Data
-
-trim > map(BWA) > dedup(picard) > indelRealign(gatk) > baseRecalibrate(gatk) > variantCalling(varscan/muTect2) > annotation(annovar) > filter(custom)
+# Somatic Variant Calling for human Whole Exom Data using several custom postprocessing tools and user switches
+* Outline:
+map(BWA) > dedup(UMI/standard) > indelRealign(gatk) > baseRecalibrate(gatk) [> UMI consensus call]
+* cluster config for SGE and SLURM
+* used as base for WESSomVar
 ## Setup
 
 ### Setup local
@@ -11,9 +13,10 @@ trim > map(BWA) > dedup(picard) > indelRealign(gatk) > baseRecalibrate(gatk) > v
 enter the BIH server directly to computation node
 
 ```
-$ ssh bihcluster qrsh
+$ ssh bihcluster 
 ```
 * provide password
+```$ qrsh | srun --pty bash -i ```
 * ready
 * copy .bash_profile .bashrc .condarc to your $HOME
 
@@ -47,7 +50,7 @@ $ git clone https://github.com/Mar111tiN/somVarGATK.git
 ```
 * use env-file (hwes.yml) to create new environment (rename in first line to <your_env>)
 ```
-$ conda env create -f setup/hwes.yml
+$ conda env create -f setup/WES.yml
 $ . activate <your_env>
 $ . deactivate
 ```

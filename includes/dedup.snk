@@ -1,12 +1,12 @@
 rule dedup:
     input:
-        "bam_merge/{sample}_{type}.{chrom}.bam"
+        "bam_merge/{sample}.{chrom}.bam"
     output:
-        "deduped/{sample}_{type}.{chrom}.bam"
+        "deduped/{sample}.{chrom}.bam"
     log:
-        "logs/dedup/{sample}_{type}.{chrom}.log"
+        "logs/dedup/{sample}.{chrom}.log"
     params:
-        metric = lambda w: f"deduped/{w.sample}_{w.type}.{w.chrom}.metric.txt",
+        metric = lambda w: f"deduped/{w.sample}.{w.chrom}.metric.txt",
         deflater = "use_jdk_deflater=true use_jdk_inflater=true" if config['alignment']['use_jdk'] else ""
     threads:
         config['dedup']['threads']
@@ -18,18 +18,18 @@ rule dedup:
 
 rule dedup_umi:
     input:
-        "bam_merge/{sample}_{type}.{chrom}.bam"
+        "bam_merge/{sample}.{chrom}.bam"
     output:
-        "umi_deduped/{sample}_{type}.{chrom}.bam"
+        "umi_deduped/{sample}.{chrom}.bam"
     threads:
         int(config['dedup_umi']['max_mem'].strip('g'))
     log:
-        "logs/dedup/{sample}_{type}.{chrom}.log"
+        "logs/dedup/{sample}.{chrom}.log"
     conda:
         f"../{config['envs']}/align-env.yml"
     params:
-        metric = lambda w: f"umi_deduped/{w.sample}_{w.type}.{w.chrom}.metric.txt",
-        umi_metrics = lambda w: f"umi_deduped/{w.sample}_{w.type}.{w.chrom}.umi_metric.txt",
+        metric = lambda w: f"umi_deduped/{w.sample}.{w.chrom}.metric.txt",
+        umi_metrics = lambda w: f"umi_deduped/{w.sample}.{w.chrom}.umi_metric.txt",
         max_mem = config['dedup_umi']['max_mem'],
         remove_dups = "false" if config['dedup_umi']['keep_dups'] else "true"
     shell:

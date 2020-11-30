@@ -1,10 +1,10 @@
 rule fastqc:
     input: get_fastq_input
     output:
-        "fastqc/{sample}_{type}_{readtrim}_fastqc.zip"
+        "fastqc/{sample}_{read}_fastqc.zip"
     threads: 4
     log:
-        "logs/fastqc/{sample}_{type}_{readtrim}.log"
+        "logs/fastqc/{sample}_{read}.log"
     conda:
         f"../{config['envs']}/fastQC-env.yml"
     script:
@@ -28,14 +28,14 @@ rule fastq_multiQC:
 
 rule cover_BED:
     input:
-        sample = "bamfinal/{sample}_{type}.bam",
+        sample = "bamfinal/{sample}.bam",
         ref_gen = os.path.join(full_path('genome_path'), 'gen_ref.done')
-    output: "coverBED/{sample}_{type}.txt"
-    log: "logs/coverBED/{sample}_{type}.log"
+    output: "coverBED/{sample}.txt"
+    log: "logs/coverBED/{sample}.log"
     threads: 2
     params:
         exon_cover = get_bed_file('Covered'),
-        prettifyBed = get_script('prettifyBED'),
+        prettifyBed = get_shell('prettyBED.awk'),
         fastq = get_fastq_pair,
         refgen = full_path('genome')
     conda:
@@ -46,13 +46,13 @@ rule cover_BED:
 
 rule bam_metrix:
     input:
-        bam = "bamfinal/{sample}_{type}.bam"
+        bam = "bamfinal/{sample}.bam"
     output: 
-        "bam_metrics/{sample}_{type}.metrics"
+        "bam_metrics/{sample}.metrics"
     conda:
         f"../{config['envs']}/align-env.yml"
     log:
-        "logs/bam_metrix/{sample}_{type}.log"
+        "logs/bam_metrix/{sample}.log"
     threads: config['bam_metrix']['threads']
     params:
         refgen = full_path('genome'),
@@ -78,14 +78,14 @@ rule bam_multiQC:
 # ##################### insert size QC ##############################################
 rule insert_metrix:
     input:
-        bam = "bamfinal/{sample}_{type}.bam"
+        bam = "bamfinal/{sample}.bam"
     output:
-        metric = "insert_metrics/{sample}_{type}.metrics",
-        pdf = "insert_metrics/{sample}_{type}.metrics.pdf"
+        metric = "insert_metrics/{sample}.metrics",
+        pdf = "insert_metrics/{sample}.metrics.pdf"
     conda:
         f"../{config['envs']}/picard-env.yml"
     log:
-        "logs/bam_metrix/{sample}_{type}.log"
+        "logs/bam_metrix/{sample}.log"
     threads: config['bam_metrix']['threads']
     shell:
         "picard CollectInsertSizeMetrics I={input.bam} O={output.metric} H={output.pdf} M=0.5"

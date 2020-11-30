@@ -2,7 +2,7 @@ rule get_fastq:
     input:
         get_fastqs  # looks up samples from file_list
     output:
-        "fastq/{sample}_{type}_{read_or_index}.fastq.gz"
+        "fastq/{sample}_{read_or_index}.fastq.gz"
     threads: 
         config['fastq']['threads']
     wildcard_constraints:
@@ -13,13 +13,13 @@ rule get_fastq:
 
 rule split_fastq:
     input:
-        "fastq/{sample}_{type}_{read_or_index}.fastq.gz"
+        "fastq/{sample}_{read_or_index}.fastq.gz"
     output:
-        expand("fastq/{{sample}}_{{type}}_{{read_or_index}}.{split}.fastq", split=list(range(config['fastq']['split_factor'])))
+        expand("fastq/{{sample}}_{{read_or_index}}.{split}.fastq", split=list(range(config['fastq']['split_factor'])))
     threads: 1
     params:
         split_factor = config['fastq']['split_factor'],
-        split_tool = get_script('split_fastq'),
+        split_tool = get_shell('split_fastq.mawk'),
         output_base = lambda w, input: str(input).replace(".fastq.gz", "")
     conda:
         "../env/compress-env.yml"
@@ -29,9 +29,9 @@ rule split_fastq:
 
 rule compress_split_fastq:
     input:
-        "fastq/{sample}_{type}_{read}.{split}.fastq"
+        "fastq/{sample}_{read}.{split}.fastq"
     output:
-        "fastq/{sample}_{type}_{read}.{split}.fastq.gz"
+        "fastq/{sample}_{read}.{split}.fastq.gz"
     threads: 
         config['fastq']['threads']
     conda:

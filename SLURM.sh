@@ -42,6 +42,6 @@ DRMAA=" -p {cluster.partition} -t {cluster.t} --mem-per-cpu={cluster.mem} -J {cl
 DRMAA="$DRMAA -o ${LOGDIR}/{rule}-%j.log";
 snakemake --unlock --rerun-incomplete;
 snakemake --dag | awk '$0 ~ "digraph" {p=1} p'| dot -Tsvg > dax/dag.svg;
-snakemake --use-conda --rerun-incomplete --cluster-config configs/cluster/somvar-cluster.json --drmaa "$DRMAA" -prk -j 1000;
+snakemake --use-conda --rerun-incomplete --cluster-config configs/cluster/cluster.json --drmaa "$DRMAA" -prk -j 1000;
 # -k ..keep going if job fails
 # -p ..print out shell commands

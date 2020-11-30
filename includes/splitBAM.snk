@@ -7,9 +7,9 @@ rule merge_bam:
     '''
 
     input:  # here I need a switch if no UMI is involved
-        expand("mapped/{{sample}}_{{type}}.{split}.bam", split=list(range(config['fastq']['split_factor'])))
+        expand("mapped/{{sample}}.{split}.bam", split=list(range(config['fastq']['split_factor'])))
     output:
-        bam = "bam_merge/{sample}_{type}.bam"    # sambamba automatically creates a bam.bai
+        bam = "bam_merge/{sample}.bam"    # sambamba automatically creates a bam.bai
     threads:
         config['merge_bam']['threads']
     conda:
@@ -26,9 +26,9 @@ rule resplit_bam:
     '''
 
     input:
-        bam = "bam_merge/{sample}_{type}.bam"
+        bam = "bam_merge/{sample}.bam"
     output:
-        bam = "bam_merge/{sample}_{type}.{chrom}.bam"
+        bam = "bam_merge/{sample}.{chrom}.bam"
     threads:
         config['resplit_bam']['threads']
     conda:
@@ -38,45 +38,36 @@ rule resplit_bam:
 
 
 ######### FINAL BAM AND SPLIT ########################
-
-rule merge_final_bam:
-    '''
-    here the chr-split bams files corresponding to the mpileup output are created
-    this step is needed for PoN-list
-    bamfinal is also consumed by the bam QC
-    '''
-
-    input:
-        bam = expand("bamfinalsplit/{{sample}}_{{type}}.{chrom}.bam", chrom=chrom_list)
-    output:
-        bam = "bamfinal/{sample}_{type}.bam"
-    params:
-        rerun_bam = get_rerun_bam
-    threads:
-        config['merge_bam']['threads']
-    conda:
-        f"../{config['envs']}/samba-env.yml"
-    script:
-        "../scripts/merge_final_bam.py"
-
-
-############# rerun ##############################################
-
-
-rule split_final_bam:
+rule final_split_bam:
     """
-    if you do a rerun of final bams, this creates the split bams needed to go on with the pipeline
+    creates symlinks to the appropriate chrom_split_bams needed for merge_final_bam
+    prevents me from making a merge_final_bam list expansion
     """
 
     input: 
-        bam = get_bamfinalsplit_input
+        bam = get_finalsplit_input
     output:
-        bam = "bamfinalsplit/{sample}_{type}.{chrom}.bam"
-    params:
-        rerun_bam = get_rerun_bam
+        bam = "bamfinalsplit/{sample}.{chrom}.bam"
     threads:
         config['resplit_bam']['threads']
     conda:
         f"../{config['envs']}/samba-env.yml"
-    script:
-        "../scripts/split_final_bam.py"
+    shell:
+        "ln -s $(pwd)/{input.bam} {output.bam}; sambamba index {ouput.bam}"
+
+
+rule merge_final_bam:
+    '''
+    bamfinal is also consumed by the bam QC
+    '''
+
+    input:
+        bam = expand("bamfinalsplit/{{sample}}.{chrom}.bam", chrom=chrom_list)
+    output:
+        bam = "bamfinal/{sample}.bam"
+    threads:
+        config['merge_bam']['threads']
+    conda:
+        f"../{config['envs']}/samba-env.yml"
+    shell:
+        "sambamba merge -t {threads} {output.bam} {input.bam} sambamba index {output.bam}"
