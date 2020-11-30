@@ -7,7 +7,7 @@ workdir: config['workdir']
 
 # extract the scriptdir for creating shell_paths
 snakedir = os.path.dirname(workflow.snakefile)
-scriptdir = os.path.join(snakedir, "scrips")
+scriptdir = os.path.join(snakedir, "scripts")
 # include helper functions
 include: "includes/io.snk"
 include: "includes/utils.snk"
@@ -40,15 +40,12 @@ ref_gen = full_path('genome')
 # specified wildcards have to match the regex
 wildcard_constraints:
     # eg sample cannot contain _ or / to prevent ambiguous wildcards
-    sample = "[^/.]+",
+    sample = "[^_/.]+_?[ABR][123]?",
     read = "[^_/.]+",
     split = "[0-9]+",
     read_or_index = "[^_/.]+",
-    trim = "[^_/.]+",
     chrom = "(chr)?[0-9XY]+",
-    filter = "filter[0-9]+",
     chrom_split = "[^_/.]+",
-    # folder = "^((?!filter).)*$"
 
 
 # ############## MASTER RULE ##############################################

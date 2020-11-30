@@ -187,30 +187,10 @@ def full_path(file):
     return full_ref_path
 
 
-def static_path(file):
-    '''
-    returns the absolute path when given relative to static folder
-    '''
-
-    return os.path.join(config['paths']['mystatic'], file)
-
-
-def get_fastq_origin(w):
-    '''
-    returns the path to the original fastq file
-    '''
-    path = os.path.join(config['inputdir'], "fastq")
-    return f"{path}/{w.sample}_R{w.read}.fastq"
-
-
-def get_fastq_link(w):
-    '''
-    returns the path to the fastq-symlink in the work directory
-    '''
-    return f"fastq/{w.sample}_R{w.read}.fastq"
-
-
 def get_fastq_pair(w):
+    '''
+    input for coverBED
+    '''
     return [f"fastq/{w.sample}_R{read}.fastq" for read in [1, 2]]
 
 

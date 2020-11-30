@@ -2,7 +2,7 @@ from os import system as shell
 
 config = snakemake.config
 w = snakemake.wildcards
-path = f"{w.sample}_{w.readtrim}"
+path = f"{w.sample}_{w.read}"
 lines = round(config["qc"]["samplefactor"]) * 4
 input = snakemake.input
 log = snakemake.log
