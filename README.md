@@ -1,7 +1,10 @@
-# Somatic Variant Calling for human Whole Exom Data using several custom postprocessing tools and user switches
+# WESbam - creates realigned recalibrated bam files from WholeExomSeq data based on snakemake
+* features:
+    + user-defined fastq-splitting for faster computation
+    + opional UMI-filtering (fgbio pipeline)
 * Outline:
 map(BWA) > dedup(UMI/standard) > indelRealign(gatk) > baseRecalibrate(gatk) [> UMI consensus call]
-* cluster config for SGE and SLURM
+* cluster config for SLURM and SGE
 * used as base for WESSomVar
 ## Setup
 
