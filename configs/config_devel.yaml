@@ -1,3 +1,4 @@
+---
 inputdirs: 
     - /fast/users/szyskam_c/work/testdata/
 workdir: /fast/users/szyskam_c/scratch/develop/WESbam
@@ -10,18 +11,17 @@ samples: # here go all your samples
     umi_barcode: index # suffix for the fastq containing the umi-barcode
 setup:
     cleanup:
-        run: False
-        keep_only_final_bam: True
+        run: false
+        keep_only_final_bam: true
     library: SureSelect  # have to be found at bed_files/SureSelect/<build>/SS_<library_version>_<build>_<Padded | Covered>[_nochr].bed
     library_version: HAEv7
     platform: illumina
     Flowcell: HKCN3DRXX
     Instrument: A00643
     platform_unit: A00643.HKCN3DRXX
-    UMI: True  # if UMI information should be used in pipeline
+    UMI: true  # if UMI information should be used in pipeline
     # if UMI_filter is true: deduplication is substituted with the UMI-filter pipeline
     # else: umi-aware deduplication is used 
-
 #### ABSOLUTE PATHS ############
 paths:
     mystatic: /fast/groups/ag_damm/work/ref/
@@ -65,17 +65,17 @@ qc:
     samplefactor: 1
 ubamXT:
     threads: 8
-    use_jdk: True # use_jdk_in/deflater to avoid SIGSEV error
+    use_jdk: true # use_jdk_in/deflater to avoid SIGSEV error
 alignment:
     tool: bwa
     threads: 16
-    clip_overlap: False
+    clip_overlap: false
     strategy: MostDistant  # alignment strategy for MergeBamAlignment
-    use_jdk: True
+    use_jdk: true
 bamindex:
     threads: 2
 tag_bam: # needs enough RAM for loading entire uncompressed index fastq into memory
-    run: True
+    run: true
     max_mem: 30g # memory for java VM (30g seems neccessary - needs to be smaller than threads * vmem/thread)
 merge_bam:
     threads: 20
@@ -85,15 +85,15 @@ dedup:
     threads: 4
 dedup_umi:
     max_mem: 10g
-    keep_dups: True # keep dups if you want to perform UMI-correction
+    keep_dups: true # keep dups if you want to perform UMI-correction
 realignGATK:
     threads: 16
 recalib:
-    run: True
+    run: true
     threads: 12
     known_sites: dbsnp_common   # which dbsnp database to use beside gold_standard_indels and phase1k
 UMI_filter:
-    run: False # if False and setup-->UMI is True, run umi-dedup
+    run: false # if false and setup-->UMI is true, run umi-dedup
     min_reads:  1 # for WES-data, 1 is good; for targeted >3  counts for all fgbio tools
     group:
         threads: 10
@@ -111,8 +111,8 @@ UMI_filter:
     remap:
         threads: 10
         mem: 6G
-        clip_overlap: True
-        clip_adapters: True
+        clip_overlap: true
+        clip_adapters: true
     filter:
         threads: 6
         mem: 6G

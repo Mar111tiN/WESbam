@@ -1,7 +1,7 @@
 import yaml
 
 # ############ SETUP ##############################
-configfile: "configs/config_devel.yaml"
+configfile: "configs/config_Pmerge2.yaml"
 # configfile: "configs/config.json"
 workdir: config['workdir']
 
@@ -12,19 +12,10 @@ scriptdir = os.path.join(snakedir, "scripts")
 include: "includes/io.snk"
 include: "includes/utils.snk"
 
-# FILE SEARCH ###########
-#   included_files = tumor_normal_pairs = sample_types = None
-#  if not included_files:  # do this only once
-#  included_files, tumor_normal_pairs, sample_types = get_files(config['inputdir'])
-# included files : list of (fastq_path, sample, type, read, tumor/normal) tuples
-# tumor_normal_pairs : list of 'sample_tumor_normal' strings
-# sample_types : list of 'sample_type' strings
-
 
 # retrieve the file_df with all the file paths from the samplesheet
 sample_df, short_sample_df = get_files(config['inputdirs'], config['samples']['samplesheet'])
 chrom_list = get_chrom_list(config)
-
 
 # ############ INCLUDES ##############################  
 include: "includes/fastq.snk"
@@ -53,14 +44,13 @@ wildcard_constraints:
 rule all:
     input:
         QC_output,
-        expand("coverBED/{samples}.txt", samples=sample_df.index),
+        expand("coverBED/{samples}.txt", samples=sample_df.query('R1 == R1').index),
 
 ###########################################################################
 
 # print out of installed tools
 onstart:
     print("    EXOM SEQUENCING PIPELINE STARTING.......")
-
     print('fastq:', short_sample_df.loc[:, ['R1', 'R2', 'index']])
     ##########################
     path_to_config = os.path.join(config['workdir'], "config.yaml")
