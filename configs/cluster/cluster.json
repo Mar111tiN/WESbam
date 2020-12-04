@@ -96,7 +96,7 @@
     },
     "cover_BED": {
         "t": "00:45",
-        "mem": 500,
+        "mem": 2500,
         "name": "{rule}:{wildcards.sample}"
     },
     "bam_metrix": {
