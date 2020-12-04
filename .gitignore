@@ -6,14 +6,10 @@ dax/
 .vscode/
 __pycache__
 sheets/test*
-slogs/
+slogs/*
 logs
 config_*.yaml
-!config_devel_rerun.yaml
 !config_*master.yaml
 sheets
 !test.csv
 !testMac.csv
-oldconfigs
-scripts/filters/filter1-*
-scripts/filters/filter2-*

@@ -33,7 +33,7 @@ unset DRMAA_LIBRARY_PATH
 # make conda available
 eval "$($(which conda) shell.bash hook)"
 # activate snakemake env
-conda activate WES-env;
+conda activate snake-env;
 echo $CONDA_PREFIX "activated";
 
 
