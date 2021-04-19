@@ -173,7 +173,9 @@ def get_bed_file(covered_or_padded):
         suffix = '_nochr' if build == 'hg19' else ''
         bed_name = f"{prefix}_{lib_version}_{build}_{covered_or_padded}{suffix}.bed"
         bed_file = os.path.join(config['paths']['mystatic'], 'bed_files', lib, build, bed_name)
-    return bed_file
+        if os.path.isfile(bed_file):
+            return bed_file
+    return full_path(bed)
 
 
 def full_path(file):
