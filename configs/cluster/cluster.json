@@ -64,12 +64,12 @@
   },
   "fastq_multiQC": {
     "t": "00:10",
-    "mem": 500,
+    "mem": 200,
     "name": "{rule}"
   },
   "insert_multiQC": {
     "t": "00:10",
-    "mem": 500,
+    "mem": 200,
     "name": "{rule}"
   },
   "dedup": {
@@ -107,7 +107,7 @@
   },
   "bam_multiQC": {
     "t": "00:10",
-    "mem": 500,
+    "mem": 200,
     "name": "{rule}"
   },
   "insert_metrix": {
