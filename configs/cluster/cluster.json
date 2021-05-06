@@ -9,7 +9,7 @@
   },
   "get_fastq": {
     "t": "00:45",
-    "mem": 20,
+    "mem": 200,
     "name": "{rule}:{wildcards.sample}_{wildcards.read_or_index}"
   },
   "split_fastq": {
@@ -33,8 +33,8 @@
     "name": "{rule}"
   },
   "map_ubam": {
-    "t": "00:15",
-    "mem": 500,
+    "t": "00:35",
+    "mem": 2000,
     "name": "{rule}:{wildcards.sample}.{wildcards.split}"
   },
   "merge_bam": {
@@ -44,7 +44,7 @@
   },
   "resplit_bam": {
     "t": "00:20",
-    "mem": 50,
+    "mem": 500,
     "name": "{rule}:{wildcards.sample}"
   },
   "merge_final_bam": {
@@ -55,7 +55,7 @@
   },
   "final_split_bam": {
     "t": "00:01",
-    "mem": 50
+    "mem": 500
   },
   "fastqc": {
     "t": "00:30",

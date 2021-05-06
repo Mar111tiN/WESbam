@@ -1,14 +1,14 @@
 import yaml
 
 # ############ SETUP ##############################
-configfile: "configs/config_Pmerge2.yaml"
+configfile: "configs/config_P12.yaml"
 # configfile: "configs/config.json"
 workdir: config['workdir']
 
 # extract the scriptdir for creating shell_paths
 snakedir = os.path.dirname(workflow.snakefile)
 scriptdir = os.path.join(snakedir, "scripts")
-# include helper functions
+# include helper functionss
 include: "includes/io.snk"
 include: "includes/utils.snk"
 
@@ -31,7 +31,7 @@ ref_gen = full_path('genome')
 # specified wildcards have to match the regex
 wildcard_constraints:
     # eg sample cannot contain _ or / to prevent ambiguous wildcards
-    sample = "[^_/.]+_?[ABR][123]?",
+    sample = "[^_/.]+_?[ABRX][12]?",
     read = "[^_/.]+",
     split = "[0-9]+",
     read_or_index = "[^_/.]+",
