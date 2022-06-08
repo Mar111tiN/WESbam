@@ -1,7 +1,8 @@
 import yaml
+import os
 
 # ############ SETUP ##############################
-configfile: "configs/config_P12.yaml"
+configfile: "configs/config_Allen.yaml"
 # configfile: "configs/config.json"
 workdir: config['workdir']
 
@@ -28,10 +29,12 @@ include: "includes/umi_filter.snk"
 
 # convenience variables
 ref_gen = full_path('genome')
+
 # specified wildcards have to match the regex
 wildcard_constraints:
     # eg sample cannot contain _ or / to prevent ambiguous wildcards
-    sample = "[^_/.]+_?[ABRX][12]?",
+    # sample = "[^_/.]+_?[ABRX][12]?",
+    sample = "[^_/.]+",
     read = "[^_/.]+",
     split = "[0-9]+",
     read_or_index = "[^_/.]+",
@@ -49,39 +52,39 @@ rule all:
 ###########################################################################
 
 # print out of installed tools
-onstart:
-    print("    EXOM SEQUENCING PIPELINE STARTING.......")
-    print('fastq:', short_sample_df.loc[:, ['R1', 'R2', 'index']])
-    ##########################
-    path_to_config = os.path.join(config['workdir'], "config.yaml")
-    with open(path_to_config, 'w+') as stream:
-        yaml.dump(config, stream, default_flow_style=False)
-    # create logs folder
+# onstart:
+#     print("    EXOM SEQUENCING PIPELINE STARTING.......")
+#     print('fastq:', short_sample_df.loc[:, ['R1', 'R2', 'index']])
+#     ##########################
+#     path_to_config = os.path.join(config['workdir'], "config.yaml")
+#     with open(path_to_config, 'w+') as stream:
+#         yaml.dump(config, stream, default_flow_style=False)
+#     # create logs folder
 
 
-onsuccess:
-    # shell("export PATH=$ORG_PATH; unset ORG_PATH")
-    print("WESbam workflow finished - everything ran smoothly")
+# onsuccess:
+#     # shell("export PATH=$ORG_PATH; unset ORG_PATH")
+#     print("WESbam workflow finished - everything ran smoothly")
 
-    # cleanup
-    if config['setup']['cleanup']['run']:
-        no_bams = config['setup']['cleanup']['keep_only_final_bam']
+#     # cleanup
+#     if config['setup']['cleanup']['run']:
+#         no_bams = config['setup']['cleanup']['keep_only_final_bam']
 
-        split_fastq_pattern = '\.[0-9]+\.fastq.gz'
-        split_bam_pattern = 'chr[^.]+\..*'
-        split_table_pattern = 'chr[^.]+\.csv'
+#         split_fastq_pattern = '\.[0-9]+\.fastq.gz'
+#         split_bam_pattern = 'chr[^.]+\..*'
+#         split_table_pattern = 'chr[^.]+\.csv'
 
-        shell("rm -rf ubam realigned bam_metrics insert_metrics fastqc mapped bam_done")
+#         shell("rm -rf ubam realigned bam_metrics insert_metrics fastqc mapped bam_done")
 
 
-        # remove split fastqs
-        shell("ls fastq | grep -E '{split_fastq_pattern}' | sed 's_^_fastq/_' | xargs -r rm -f")
+#         # remove split fastqs
+#         shell("ls fastq | grep -E '{split_fastq_pattern}' | sed 's_^_fastq/_' | xargs -r rm -f")
         
-        # remove split recalib bams
-        shell("ls recalib | grep -E '{split_bam_pattern}' | sed 's-^-recalib/-' | xargs -r rm -f")
+#         # remove split recalib bams
+#         shell("ls recalib | grep -E '{split_bam_pattern}' | sed 's-^-recalib/-' | xargs -r rm -f")
 
-        if no_bams:
-            shell("rm -r bam_merge ")
-        else:
-            # only remove split_bams in bam_merge
-            shell("ls bam_merge | grep -E '{split_bam_pattern}' | sed 's-^-bam_merge/-' | xargs -r rm -f")
+#         if no_bams:
+#             shell("rm -r bam_merge ")
+#         else:
+#             # only remove split_bams in bam_merge
+#             shell("ls bam_merge | grep -E '{split_bam_pattern}' | sed 's-^-bam_merge/-' | xargs -r rm -f")

@@ -5,9 +5,11 @@ import re
 
 def QC_output(_):
     '''
-    switch for fastQC output depending on config rerun option
+    switch for multiQC output depending on config
     '''
-    out = ["QC/libraryQC.html", "QC/insertQC.html", "QC/fastQC.html"]
+    out = ["QC/insertQC.html", "QC/fastQC.html"]
+    if config['bam_metrix']['run']:
+        out.append("QC/libraryQC.html")
     return out
 
 
@@ -183,7 +185,6 @@ def full_path(file):
     '''
     returns the full path to a reference
     '''
-
     build = config['ref']['build']
     full_ref_path = os.path.join(config['paths']['mystatic'], config['ref'][build][file])
     return full_ref_path

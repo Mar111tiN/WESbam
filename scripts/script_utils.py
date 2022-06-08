@@ -1,5 +1,5 @@
 import os
-from subprocess import check_call as shell
+from subprocess import check_call as shll
 from datetime import datetime as dt
 import pandas as pd
 
@@ -49,7 +49,7 @@ def show_command(command, list=False, multi=True, **kwargs):
 
 def run_cmd(cmd, multi=False):
     show_command(cmd, multi=multi)
-    exit = shell(cmd, shell=True)
+    exit = shll(cmd, shell=True)
     return exit == 0
 
 
