@@ -21,7 +21,7 @@ rule create_GATK_target_list:
         gatk = config['tools']['gatk3'],
         ref = IR_ref
     shell:
-        "{params.gatk} RealignerTargetCreator -nt {threads} {params.ref} -I {input.bam} -o {output} &>{log}"
+        "gatk3 -T RealignerTargetCreator -nt {threads} {params.ref} -I {input.bam} -o {output} &>{log}"
 
 
 rule realignGATK:
@@ -41,7 +41,7 @@ rule realignGATK:
         ref = IR_ref,
         deflater = "-jdk_deflater -jdk_inflater" if config['envs'] == "envMac" else ""
     shell:
-        "{params.gatk} IndelRealigner {params.deflater} {params.ref} "
+        "gatk3 -T IndelRealigner {params.deflater} {params.ref} "
         "-targetIntervals {input.intervals} -I {input.bam} -o {output.bam} &>{log}; "
 
 
@@ -61,7 +61,7 @@ rule base_recalib:
         genome = f"-R {full_path('genome')}",
         known_sites = f"--known-sites {full_path('gold_standard_indels')} --known-sites {full_path('phase1k_indels')} --known-sites {full_path(config['recalib']['known_sites'])}"
     shell:
-        "{params.gatk} BaseRecalibrator -I {input.bam} {params.genome} {params.known_sites} -O {output.table} &>{log}; "
+        "gatk BaseRecalibrator -I {input.bam} {params.genome} {params.known_sites} -O {output.table} &>{log}; "
 
 
 # here I need a switch to just split 
@@ -84,6 +84,6 @@ rule apply_BQSR:
         known_sites = f"--known-sites {full_path('gold_standard_indels')} --known-sites {full_path('phase1k_indels')} --known-sites {full_path(config['recalib']['known_sites'])}"  
     shell:
         # apply recalibration table on input
-        "{params.gatk} ApplyBQSR -I {input.bam} {params.genome} --bqsr-recal-file {input.table} -O {output.bam}; "  #  &>>{log}
+        "gatk ApplyBQSR -I {input.bam} {params.genome} --bqsr-recal-file {input.table} -O {output.bam}; "  #  &>>{log}
         # recreate recalibration table from output for QC
-        "{params.gatk} BaseRecalibrator -I {output.bam} {params.genome} {params.known_sites} -O {output.table}"  #  &>>{log}
+        "gatk BaseRecalibrator -I {output.bam} {params.genome} {params.known_sites} -O {output.table}"  #  &>>{log}

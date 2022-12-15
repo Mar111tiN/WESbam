@@ -22,7 +22,7 @@ rule split_fastq:
         split_tool = get_shell('split_fastq.mawk'),
         output_base = lambda w, input: str(input).replace(".fastq.gz", "")
     conda:
-        "../env/compress-env.yml"
+        f"../{config['envs']}/align-env.yml"
     shell:
         "{params.split_tool} {input} {params.split_factor} {params.output_base}"
 
@@ -35,6 +35,6 @@ rule compress_split_fastq:
     threads: 
         config['fastq']['threads']
     conda:
-        "../env/compress-env.yml"
+        f"../{config['envs']}/align-env.yml"
     shell:
         "pigz -5 -p {threads} {input}"

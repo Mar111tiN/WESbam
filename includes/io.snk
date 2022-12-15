@@ -29,7 +29,7 @@ def get_files(folder_list, sample_sheet):
     if not sample_sheet.startswith('/'):
         sample_sheet = os.path.join(snakedir, sample_sheet)
     show_output(f"Reading csv sample sheet {sample_sheet}")
-    samples = pd.read_csv(sample_sheet, sep='\t', index_col=0).set_index('name')
+    samples = pd.read_csv(sample_sheet, sep='\t').set_index('name')
 
 
     fastq_list = []
@@ -41,7 +41,7 @@ def get_files(folder_list, sample_sheet):
                 if '.fastq.' in file and '.md5' not in file and 'trim' not in file and 'sub' not in file:
                     fastq_list.append(os.path.join(folder, file))
                     short_list.append(file)
-
+    print(samples)
     def get_fastq_paths(row, fastq_list=None):
         '''
         go through the sample list and find the respective read and index fastqs in the respective fastq_list
@@ -55,7 +55,7 @@ def get_files(folder_list, sample_sheet):
         for file in fastq_list:
             # get the basename
             base_file = os.path.basename(file)
-            if  base_file.startswith(f"{row['sample']}_"):
+            if  base_file.startswith(f"{row['sample']}_") or f"_{row['sample']}_" in base_file:
                 if f'_{index}' in base_file:
                     row['index'] = file
                 elif 'barcode' in base_file:
@@ -186,7 +186,8 @@ def full_path(file):
     returns the full path to a reference
     '''
     build = config['ref']['build']
-    full_ref_path = os.path.join(config['paths']['mystatic'], config['ref'][build][file])
+    ref_path = os.path.join(config['paths']['mystatic'],build)
+    full_ref_path = os.path.join(ref_path, config['ref'][build][file])
     return full_ref_path
 
 

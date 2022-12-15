@@ -6,7 +6,7 @@ rule fastqc:
     log:
         "logs/fastqc/{sample}_{read}.log"
     conda:
-        f"../{config['envs']}/fastQC-env.yml"
+        f"../{config['envs']}/QC-env.yml"
     script:
         "../scripts/fastQC.py"
 
@@ -18,7 +18,7 @@ rule fastq_multiQC:
         "QC/fastQC.html"
     threads: 2
     conda:
-        f"../{config['envs']}/fastQC-env.yml"
+        f"../{config['envs']}/QC-env.yml"
     shell:
         "multiqc -f -o QC/ -n fastQC --interactive fastqc/; "  # interactive for big number of files
         "rm -f fastqc/*_fastqc.html fastq/*.sub"  # leave the zip files for accumulated multiQC of all processed samples
@@ -34,12 +34,12 @@ rule cover_BED:
     log: "logs/coverBED/{sample}.log"
     threads: 2
     params:
-        exon_cover = get_bed_file('Covered'),
+        exon_cover = full_path('bed_file'),
         prettifyBed = get_shell('prettyBED.awk'),
         fastq = get_fastq_pair,
         refgen = full_path('genome')
     conda:
-        f"../{config['envs']}/bedcover-env.yml"
+        f"../{config['envs']}/QC-env.yml"
     script:
         "../scripts/bedcover.py"
 
@@ -56,8 +56,8 @@ rule bam_metrix:
     threads: config['bam_metrix']['threads']
     params:
         refgen = full_path('genome'),
-        bait = os.path.join(config['paths']['mystatic'], config['bam_metrix']['bait']),
-        target = os.path.join(config['paths']['mystatic'], config['bam_metrix']['target'])
+        bait = full_path("bed_file"),
+        target = full_path("bed_file_targets")
     shell:
         "picard CollectHsMetrics I={input.bam} O={output} R={params.refgen} "
         "BAIT_INTERVALS={params.bait} "
@@ -69,7 +69,7 @@ rule bam_multiQC:
     output:
         "QC/libraryQC.html"
     conda:
-        f"../{config['envs']}/fastQC-env.yml"
+        f"../{config['envs']}/QC-env.yml"
     threads: 2
     shell:
         "multiqc -f -o QC/ -n libraryQC --interactive bam_metrics/; "
@@ -83,7 +83,7 @@ rule insert_metrix:
         metric = "insert_metrics/{sample}.metrics",
         pdf = "insert_metrics/{sample}.metrics.pdf"
     conda:
-        f"../{config['envs']}/picard-env.yml"
+        f"../{config['envs']}/align-env.yml"
     log:
         "logs/bam_metrix/{sample}.log"
     threads: config['bam_metrix']['threads']
@@ -97,7 +97,7 @@ rule insert_multiQC:
     output:
         "QC/insertQC.html"
     conda:
-        f"../{config['envs']}/fastQC-env.yml"
+        f"../{config['envs']}/QC-env.yml"
     threads: 2
     shell:
         "multiqc -f -o QC/ -n insertQC --interactive insert_metrics/; "

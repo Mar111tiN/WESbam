@@ -16,21 +16,35 @@ rule ubamXT:
         get_FastqToSam_input  # gets two or three fastqs depending on Umi-setup
     output:
         bam = "ubam/{sample}.{split}.bam",
-        metrix = "ubam/{sample}.{split}.metrix.txt"
     threads:
         config['ubamXT']['threads']
     log:
         "logs/ubam/{sample}.{split}.log"
     conda:
-        f"../{config['envs']}/ubam-env.yml"
+        f"../{config['envs']}/align-env.yml"
     params:
         read_group_info = get_RG_info,
-        read_structure = "+T +T +M" if config['setup']['UMI'] else "+T +T",
+        read_structure = "+T +T +M" if config['setup']['UMI'] else "+T +T"
+    shell:
+        "fgbio FastqToBam -i {input} {params.read_group_info} -s --read-structure {params.read_structure} -o {output.bam} "
+
+
+rule ubam_dedup:
+    input:
+        bam = "ubam/{sample}.{split}.bam"
+    output:
+        bam = "ubam/{sample}.{split}.dedup.bam",
+        metrix = "ubam/{sample}.{split}.metrix.txt"
+    threads:
+        config['ubamXT']['threads']
+    log:
+        "logs/ubam/{sample}.{split}.dedup.log"
+    conda:
+        f"../{config['envs']}/align-env.yml"
+    params:
         deflater = "use_jdk_deflater=true use_jdk_inflater=true" if config['ubamXT']['use_jdk'] else ""
     shell:
-        "fgbio FastqToBam -i {input} {params.read_group_info} -s --read-structure {params.read_structure} -o /dev/stdout | "
-        "picard MarkIlluminaAdapters {params.deflater} I=/dev/stdin O={output.bam} M={output.metrix} TMP_DIR=$TMPDIR"
-
+        "picard MarkIlluminaAdapters {params.deflater} I={input.bam} O={output.bam} M={output.metrix} TMP_DIR=$TMPDIR"
 
 def get_sed(w):
     '''
@@ -80,7 +94,7 @@ def get_clip(_):
 
 rule map_ubam:
     input:
-        bam = "ubam/{sample}.{split}.bam",
+        bam = "ubam/{sample}.{split}.dedup.bam",
         genome = os.path.join(full_path('genome_path'), 'gen_ref.done')
     output:
         "mapped/{sample}.{split}.bam"

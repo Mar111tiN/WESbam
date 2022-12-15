@@ -6,7 +6,7 @@ rule umi_group:
     threads:
         config['UMI_filter']['group']['threads']
     conda:
-        "../env/ubam-env.yml"
+        f"../{config['envs']}/align-env.yml"
     log:
         "logs/umi/{sample}.{chrom}.UG.log"
     params:
@@ -30,7 +30,7 @@ rule call_consensus:
     threads:
         config['UMI_filter']['call']['threads']
     conda:
-        "../env/ubam-env.yml"
+        f"../{config['envs']}/align-env.yml"
     params:
         mem = f"-Xmx{config['UMI_filter']['call']['mem']}",
         min_reads = config['UMI_filter']['min_reads'],
@@ -128,7 +128,7 @@ rule filter_consensus:
     threads:
         config['UMI_filter']['filter']['threads']
     conda:
-        "../env/ubam-env.yml"
+        f"../{config['envs']}/align-env.yml"
     params:
         mem = f"-Xmx{config['UMI_filter']['filter']['mem']}",
         min_reads = config['UMI_filter']['min_reads'],
