@@ -2,7 +2,7 @@ import yaml
 import os
 
 # ############ SETUP ##############################
-configfile: "configs/config_Allen.yaml"
+configfile: "configs/config_P1696_LungWES.yml"
 # configfile: "configs/config.json"
 workdir: config['workdir']
 

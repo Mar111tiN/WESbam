@@ -27,6 +27,11 @@
     "mem": 1000,
     "name": "{rule}:{wildcards.sample}.{wildcards.split}"
   },
+  "ubam_dedup": {
+    "t": "00:25",
+    "mem": 1000,
+    "name": "{rule}:{wildcards.sample}.{wildcards.split}"
+  },
   "make_ref_genome": {
     "t": "02:00",
     "mem": 2000,
@@ -50,7 +55,7 @@
   "merge_final_bam": {
     "t": "01:30",
     "mem": 2000,
-    "partition": "medium",
+    "partition": "short",
     "name": "{rule}:{wildcards.sample}"
   },
   "final_split_bam": {
@@ -102,7 +107,7 @@
   "bam_metrix": {
     "t": "02:30",
     "mem": 500,
-    "partition": "medium",
+    "partition": "short",
     "name": "{rule}:{wildcards.sample}"
   },
   "bam_multiQC": {

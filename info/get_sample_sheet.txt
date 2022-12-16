@@ -1,0 +1,4 @@
+for getting all your samples from a fastq folder into a sample sheet format:
+
+replace <fastq_folder> with your destination folder
+lsm <fastq_folder> | awk 'BEGIN{FS=" ";printf("\tsample\tLane\tname\n")}NR%2==0{s=$NF;split(s,S,"_");i++;printf("%s\t%s\t%s\t%s\n",i,S[1],1,S[1])}'

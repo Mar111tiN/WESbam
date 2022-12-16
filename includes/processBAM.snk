@@ -18,10 +18,11 @@ rule create_GATK_target_list:
     conda:
         f"../{config['envs']}/gatk3-env.yml"
     params:
+        java_mem = config['realignGATK']['max_mem'],
         gatk = config['tools']['gatk3'],
         ref = IR_ref
     shell:
-        "gatk3 -T RealignerTargetCreator -nt {threads} {params.ref} -I {input.bam} -o {output} &>{log}"
+        "gatk3 -Xmx{params.java_mem} -T RealignerTargetCreator -nt {threads} {params.ref} -I {input.bam} -o {output} &>{log}"
 
 
 rule realignGATK:
@@ -37,11 +38,12 @@ rule realignGATK:
     conda:
         f"../{config['envs']}/gatk3-env.yml"
     params:
+        java_mem = config['realignGATK']['max_mem'],
         gatk = config['tools']['gatk3'],
         ref = IR_ref,
         deflater = "-jdk_deflater -jdk_inflater" if config['envs'] == "envMac" else ""
     shell:
-        "gatk3 -T IndelRealigner {params.deflater} {params.ref} "
+        "gatk3 -Xmx{params.java_mem} -T IndelRealigner {params.deflater} {params.ref} "
         "-targetIntervals {input.intervals} -I {input.bam} -o {output.bam} &>{log}; "
 
 

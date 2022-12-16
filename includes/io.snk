@@ -41,7 +41,7 @@ def get_files(folder_list, sample_sheet):
                 if '.fastq.' in file and '.md5' not in file and 'trim' not in file and 'sub' not in file:
                     fastq_list.append(os.path.join(folder, file))
                     short_list.append(file)
-    print(samples)
+
     def get_fastq_paths(row, fastq_list=None):
         '''
         go through the sample list and find the respective read and index fastqs in the respective fastq_list
